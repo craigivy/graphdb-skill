@@ -83,7 +83,7 @@ func handleEnrichFeatures(args []string) {
 	log.Println("Starting Database-backed Feature Enrichment...")
 
 	// 1. Atomic Feature Extraction
-	if err := orchestrator.RunExtraction(*batchSizePtr); err != nil {
+	if err := orchestrator.RunExtraction(*batchSizePtr, *dirPtr); err != nil {
 		log.Fatalf("Extraction failed: %v", err)
 	}
 
