@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.370-beta] - 2026-05-13 [Pre-release]
+### Added
+- **Query:** Added `-dir` flag to explicitly set the base directory for source files when fetching snippets from outside the project root.
+
 ## [1.6.0] - 2026-05-04
 ### Added
 - **Query:** Added a raw Cypher query passthrough mode (`-type cypher`) for arbitrary read-only database queries.

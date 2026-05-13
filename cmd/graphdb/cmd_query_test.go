@@ -41,6 +41,46 @@ func TestHandleQuery_SemanticSeams(t *testing.T) {
 	handleQuery(args)
 }
 
+func TestHandleQuery_DirFlag(t *testing.T) {
+	// 1. Setup Environment for Mocking
+	os.Setenv("GRAPHDB_MOCK_ENABLED", "true")
+	os.Setenv("NEO4J_URI", "bolt://localhost:7687")
+	defer os.Unsetenv("GRAPHDB_MOCK_ENABLED")
+	defer os.Unsetenv("NEO4J_URI")
+
+	// 2. Setup temporary directory to change into
+	tempDir := t.TempDir()
+	
+	// 3. Save original working directory
+	origWd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get current working directory: %v", err)
+	}
+	defer func() {
+		// Restore original working directory after the test
+		if err := os.Chdir(origWd); err != nil {
+			t.Errorf("Failed to restore original working directory: %v", err)
+		}
+	}()
+
+	// 4. Call handleQuery with dir flag
+	args := []string{"-type", "status", "-dir", tempDir}
+	handleQuery(args)
+	
+	// 5. Verify the working directory has changed
+	newWd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get new working directory: %v", err)
+	}
+	
+	// Because TempDir on some OS (like Mac) can return a symlink path, 
+	// we check if the newWd is the tempDir or resolves to the same path.
+	// But simply checking we moved away from origWd is a basic assertion.
+	if newWd == origWd {
+		t.Errorf("Expected working directory to change, but it remained %s", origWd)
+	}
+}
+
 func TestMockProvider_GetSemanticSeams(t *testing.T) {
 	// Task 4.1 requirement: verify the mock provider can execute and return results for semantic seam detection.
 	mock := &MockProvider{}

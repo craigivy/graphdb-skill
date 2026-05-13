@@ -123,6 +123,7 @@ ${graphdb_bin} query -type <type> -target "<search_term>" [options]
 ```
 
 **Global Query Options:**
+*   `-dir <path>`: Base directory for source files (useful for `fetch-source` if querying from outside the project root).
 *   `-limit <int>`: Restricts the number of results returned (Default: 10). Primarily affects semantic searches (`search-features`, `search-similar`, `hybrid-context`) and dependency bounds (`neighbors`).
 *   `-summary`: (Boolean) If provided, simplifies the JSON output to only include structural metrics/counts instead of full arrays of nodes. Excellent for preventing context-window bloat when querying nodes with massive fan-out (e.g., getting counts of dependencies rather than the full list).
 

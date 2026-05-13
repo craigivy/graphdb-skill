@@ -15,6 +15,7 @@ import (
 func handleQuery(args []string) {
 	fs := flag.NewFlagSet("query", flag.ExitOnError)
 	typePtr := fs.String("type", "", "Query type: search-features, search-similar, hybrid-context, neighbors, impact, globals, coverage, seams, hotspots, explore-domain, what-if, status, semantic-seams, cypher, duplicates")
+	dirPtr := fs.String("dir", "", "Base directory for source files (used by fetch-source)")
 	targetPtr := fs.String("target", "", "Target function name or query text (comma-separated for what-if)")
 	target2Ptr := fs.String("target2", "", "Second target (e.g. for locate-usage or what-if)")
 	depthPtr := fs.Int("depth", 1, "Traversal depth")
@@ -32,6 +33,12 @@ func handleQuery(args []string) {
 	modelPtr := fs.String("model", "", "Embedding model name")
 
 	fs.Parse(args)
+
+	if *dirPtr != "" {
+		if err := os.Chdir(*dirPtr); err != nil {
+			log.Fatalf("Failed to change directory to %s: %v", *dirPtr, err)
+		}
+	}
 
 	cfg := config.LoadConfig()
 	if *modelPtr != "" {
