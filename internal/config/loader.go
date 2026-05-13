@@ -13,6 +13,7 @@ type Config struct {
 	Neo4jURI                  string
 	Neo4jUser                 string
 	Neo4jPassword             string
+	Neo4jDatabase             string
 	GoogleCloudProject        string
 	GoogleCloudLocation       string
 	GeminiEmbeddingModel      string
@@ -39,10 +40,16 @@ type Config struct {
 	        concurrency = 5 // Default concurrency
 	}
 
+	dbName := os.Getenv("NEO4J_DATABASE")
+	if dbName == "" {
+		dbName = "neo4j"
+	}
+
 	return Config{
 	        Neo4jURI:                  os.Getenv("NEO4J_URI"),
 	        Neo4jUser:                 os.Getenv("NEO4J_USER"),
 	        Neo4jPassword:             os.Getenv("NEO4J_PASSWORD"),
+	        Neo4jDatabase:             dbName,
 	        GoogleCloudProject:        os.Getenv("GOOGLE_CLOUD_PROJECT"),
 	        GoogleCloudLocation:       os.Getenv("GOOGLE_CLOUD_LOCATION"),
 	        GeminiEmbeddingModel:      os.Getenv("GEMINI_EMBEDDING_MODEL"),

@@ -26,6 +26,7 @@ func isProgressActive() bool {
 type Neo4jProvider struct {
 	driver neo4j.DriverWithContext
 	ctx    context.Context
+	dbName string
 }
 
 // NewNeo4jProvider creates a new connection to Neo4j.
@@ -51,6 +52,7 @@ func NewNeo4jProvider(cfg config.Config) (*Neo4jProvider, error) {
 	return &Neo4jProvider{
 		driver: driver,
 		ctx:    ctx,
+		dbName: cfg.Neo4jDatabase,
 	}, nil
 }
 
@@ -84,7 +86,7 @@ func (p *Neo4jProvider) executeQuery(query string, params map[string]any) (*neo4
 		}
 		logger.Query.Printf("Params: %v", sanitized)
 	}
-	return neo4j.ExecuteQuery(p.ctx, p.driver, query, params, neo4j.EagerResultTransformer)
+	return neo4j.ExecuteQuery(p.ctx, p.driver, query, params, neo4j.EagerResultTransformer, neo4j.ExecuteQueryWithDatabase(p.dbName))
 }
 
 // Traverse traverses the graph from a start node.

@@ -42,7 +42,7 @@ func handleImport(args []string) {
 	}
 	defer driver.Close(context.Background())
 
-	loader := loader.NewNeo4jLoader(driver, "neo4j", cfg.GeminiEmbeddingDimensions) // Default DB name
+	loader := loader.NewNeo4jLoader(driver, cfg.Neo4jDatabase, cfg.GeminiEmbeddingDimensions)
 
 	ctx := context.Background()
 

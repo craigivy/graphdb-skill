@@ -85,7 +85,7 @@ func handleIngest(args []string) {
 		}
 		defer neoDriver.Close(context.Background())
 
-		neo4jLoader := loader.NewNeo4jLoader(neoDriver, "neo4j", cfg.GeminiEmbeddingDimensions)
+		neo4jLoader := loader.NewNeo4jLoader(neoDriver, cfg.Neo4jDatabase, cfg.GeminiEmbeddingDimensions)
 		emitter = storage.NewNeo4jEmitter(neo4jLoader, context.Background(), 500)
 
 	} else if *nodesPtr != "" || *edgesPtr != "" {
