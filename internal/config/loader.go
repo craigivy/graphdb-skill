@@ -14,6 +14,7 @@ type Config struct {
 	Neo4jUser                 string
 	Neo4jPassword             string
 	Neo4jDatabase             string
+	BaseDir                   string
 	GoogleCloudProject        string
 	GoogleCloudLocation       string
 	GeminiEmbeddingModel      string
@@ -50,6 +51,7 @@ type Config struct {
 	        Neo4jUser:                 os.Getenv("NEO4J_USER"),
 	        Neo4jPassword:             os.Getenv("NEO4J_PASSWORD"),
 	        Neo4jDatabase:             dbName,
+	        BaseDir:                   ".",
 	        GoogleCloudProject:        os.Getenv("GOOGLE_CLOUD_PROJECT"),
 	        GoogleCloudLocation:       os.Getenv("GOOGLE_CLOUD_LOCATION"),
 	        GeminiEmbeddingModel:      os.Getenv("GEMINI_EMBEDDING_MODEL"),

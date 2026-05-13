@@ -24,9 +24,10 @@ func isProgressActive() bool {
 
 // Neo4jProvider implements GraphProvider using the official Neo4j Go driver.
 type Neo4jProvider struct {
-	driver neo4j.DriverWithContext
-	ctx    context.Context
-	dbName string
+	driver  neo4j.DriverWithContext
+	ctx     context.Context
+	dbName  string
+	baseDir string
 }
 
 // NewNeo4jProvider creates a new connection to Neo4j.
@@ -50,9 +51,10 @@ func NewNeo4jProvider(cfg config.Config) (*Neo4jProvider, error) {
 	}
 
 	return &Neo4jProvider{
-		driver: driver,
-		ctx:    ctx,
-		dbName: cfg.Neo4jDatabase,
+		driver:  driver,
+		ctx:     ctx,
+		dbName:  cfg.Neo4jDatabase,
+		baseDir: cfg.BaseDir,
 	}, nil
 }
 
@@ -771,7 +773,12 @@ func (p *Neo4jProvider) FetchSource(nodeID string) (string, error) {
 		end = 50
 	}
 
-	return snippet.SliceFile(file, int(start), int(end))
+	fullPath := file
+	if p.baseDir != "" && p.baseDir != "." {
+		fullPath = filepath.Join(p.baseDir, file)
+	}
+
+	return snippet.SliceFile(fullPath, int(start), int(end))
 }
 
 // LocateUsage identifies where a dependency is used within a function.
@@ -808,7 +815,12 @@ func (p *Neo4jProvider) LocateUsage(sourceID string, targetID string) (any, erro
 		return nil, fmt.Errorf("source node %s missing location info", sourceID)
 	}
 
-	content, err := snippet.SliceFile(file, int(start), int(end))
+	fullPath := file
+	if p.baseDir != "" && p.baseDir != "." {
+		fullPath = filepath.Join(p.baseDir, file)
+	}
+
+	content, err := snippet.SliceFile(fullPath, int(start), int(end))
 	if err != nil {
 		return nil, err
 	}
