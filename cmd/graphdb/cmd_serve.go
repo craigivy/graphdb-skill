@@ -13,7 +13,7 @@ import (
 func handleServe(args []string) {
 	fs := flag.NewFlagSet("serve", flag.ExitOnError)
 	portPtr := fs.Int("port", 8080, "Port to run the HTTP server on")
-	locationPtr := fs.String("location", "us-central1", "GCP Location")
+	locationPtr := fs.String("location", "global", "GCP Location")
 	modelPtr := fs.String("model", "", "Embedding model name")
 
 	fs.Parse(args)

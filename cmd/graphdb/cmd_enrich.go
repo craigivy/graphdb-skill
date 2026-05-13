@@ -22,7 +22,7 @@ func handleEnrichFeatures(args []string) {
 	fs.Parse(args)
 
 	if cfg.GoogleCloudLocation == "" {
-		cfg.GoogleCloudLocation = "us-central1"
+		cfg.GoogleCloudLocation = "global"
 	}
 
 	if cfg.GeminiEmbeddingModel == "" {
@@ -31,7 +31,7 @@ func handleEnrichFeatures(args []string) {
 
 	if cfg.GeminiGenerativeModel == "" {
 		log.Fatal("GEMINI_GENERATIVE_MODEL is not set. Please set it in your .env file or environment.\n" +
-			"Example: export GEMINI_GENERATIVE_MODEL=gemini-1.5-flash")
+			"Example: export GEMINI_GENERATIVE_MODEL=gemini-3.1-flash-lite")
 	}
 
 	if cfg.GoogleCloudProject == "" {

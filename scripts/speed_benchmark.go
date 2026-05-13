@@ -34,9 +34,9 @@ func main() {
 	vertexCfg := config.Config{
 		GoogleCloudProject:    "jasondel-cloudrun10",
 		GoogleCloudLocation:   "global",
-		GeminiGenerativeModel: "gemini-3.1-flash-lite-preview",
+		GeminiGenerativeModel: "gemini-3.1-flash-lite",
 	}
-	runTest("Vertex AI Global (gemini-3.1-flash-lite-preview)", vertexCfg, concurrency)
+	runTest("Vertex AI Global (gemini-3.1-flash-lite)", vertexCfg, concurrency)
 }
 
 func runTest(name string, cfg config.Config, concurrency int) {

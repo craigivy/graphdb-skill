@@ -26,12 +26,12 @@ func main() {
 		GenAIAPIVersion:       "v1", // Default Vertex API version
 	})
 
-	// Test 2: Vertex AI Endpoint (gemini-3.1-flash-lite-preview)
-	fmt.Println("\n--- Test 2: Gemini 3.1 Flash Lite Preview (Vertex AI Global Region) ---")
+	// Test 2: Vertex AI Endpoint (gemini-3.1-flash-lite)
+	fmt.Println("\n--- Test 2: Gemini 3.1 Flash Lite (Vertex AI Global Region) ---")
 	testEndpoint(config.Config{
 		GoogleCloudProject:    "jasondel-cloudrun10",
 		GoogleCloudLocation:   "global",
-		GeminiGenerativeModel: "gemini-3.1-flash-lite-preview",
+		GeminiGenerativeModel: "gemini-3.1-flash-lite",
 		// Note: GenAIBaseURL is empty, so it uses the native Vertex endpoint
 	})
 }

@@ -57,10 +57,11 @@ NEO4J_PASSWORD=your_secure_password
 
 # Google Cloud / AI Configuration (For Embeddings and RPG Extraction)
 GOOGLE_CLOUD_PROJECT=your_project_id
-GOOGLE_CLOUD_LOCATION=us-central1
+GOOGLE_CLOUD_LOCATION=global
 GEMINI_EMBEDDING_MODEL=gemini-embedding-001
 GEMINI_EMBEDDING_DIMENSIONS=768
-GEMINI_GENERATIVE_MODEL=gemini-3.1-flash-lite-preview
+GEMINI_GENERATIVE_MODEL=gemini-3.1-flash-lite
+GRAPHDB_LOG=graphdb.log
 LLM_CONCURRENCY=5 # Optional: Number of concurrent LLM requests during RPG enrichment
 ```
 

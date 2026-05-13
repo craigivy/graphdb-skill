@@ -30,7 +30,7 @@ If it does not exist, build it from the project root: `make build` (Linux/macOS)
 The tool automatically inherits the following environment variables. Assume they are already configured correctly via the `.env` file or host system. 
 *   `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` (Required for `import` and `query`)
 *   `GOOGLE_CLOUD_PROJECT` (Required for Vertex AI embeddings)
-*   `GOOGLE_CLOUD_LOCATION` (Default: `us-central1`)
+*   `GOOGLE_CLOUD_LOCATION` (Default: `global`)
 
 ## Operational Guidelines for Agents
 
@@ -167,7 +167,7 @@ ${graphdb_bin} serve -port 8080
 ```
 *   *Options:*
     *   `-port`: The port to run the server on (default: `8080`).
-    *   `-location`: GCP Location for semantic searches (default: `us-central1`).
+    *   `-location`: GCP Location for semantic searches (default: `global`).
     *   `-model`: Embedding model to use for semantic searches (default: loaded from `.env`).
 
 **Operational Note:**

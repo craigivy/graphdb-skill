@@ -28,7 +28,7 @@ func handleQuery(args []string) {
 	directionPtr := fs.String("direction", "outgoing", "Traversal direction: incoming, outgoing, both")
 
 	// Embedder args for 'features' type
-	locationPtr := fs.String("location", "us-central1", "GCP Location")
+	locationPtr := fs.String("location", "global", "GCP Location")
 	modelPtr := fs.String("model", "", "Embedding model name")
 
 	fs.Parse(args)
