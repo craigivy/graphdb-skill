@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.371-beta] - 2026-05-13 [Pre-release]
+### Added
+- **Config:** Added support for `NEO4J_DATABASE` environment variable to allow targeting specific Neo4j databases.
+
 ## [1.6.369-beta] - 2026-05-13 [Pre-release]
 ### Added
 - **Query:** Added `-dir` flag to explicitly set the base directory for source files when fetching snippets from outside the project root.
