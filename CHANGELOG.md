@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.387-beta] - 2026-05-14 [Pre-release]
+### Removed
+- **Skills:** Removed the `neo4j-manager` skill; management tasks are now handled externally or via core tool instructions.
+- **Tracing:** Removed Agent Execution Tracing scripts (`agent-tracer.js`), artifacts (`execution-trace.jsonl`), and the standalone `trace-viewer.html`.
+- **Assets:** Removed unused UI assets (`.png` files) and the deprecated `UX_DESIGN_OVERVIEW.md`.
+- **Artifacts:** Cleaned up temporary binary and test artifacts (`tmp_cypher`, `query.test`, `coverage.out`).
+
+### Changed
+- **Terminology:** Generalized `graphdb` skill instructions in `SKILL.md` to use "graph database" instead of Neo4j-specific language where appropriate.
+- **Workflows:** Simplified build and ingestion documentation in `README.md` and `SKILL.md` to prioritize the `build-all` command.
+- **Status:** Marked "Custom LLM Backends" as an **Experimental** feature with appropriate stability warnings.
+
+### Fixed
+- **Git:** Updated `.gitignore` to prevent tracking of future test binaries (`*.test`) and coverage reports (`*.out`).
+
 ## [1.7.0] - 2026-05-14
 ### Added
 - **Query:** Added `-dir` flag to explicitly set the base directory for source files, enabling analysis and source fetching from outside the project root.
