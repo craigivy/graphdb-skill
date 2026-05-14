@@ -56,60 +56,46 @@ If a command (especially `enrich-features`, `build-all`, or any semantic query) 
 ## Workflows
 
 ### 1. The "One-Shot" Build (Recommended)
-To rebuild the entire graph from scratch (Ingest -> Import -> All Enrichment Phases), use the `build-all` command. This single command handles all 6 steps sequentially, building structural nodes, semantic embeddings, contamination models, git history analysis, and test linkages.
+To build the entire graph from scratch (Ingest -> Import -> All Enrichment Phases), use the `build-all` command. This is the standard entry point for all new projects.
 ```bash
 ${graphdb_bin} build-all -dir .
 ```
-### 2. Manual Pipeline
-If you need granular control over each step (or if a specific enrichment step fails and needs to be re-run), follow this sequence. Note that `build-all` automatically runs all 6 of these steps.
 
-**Step 0: Check Sync Status**
+### 2. Status & Incremental Ingestion
+Before rebuilding, check if the graph is already in sync with your local code:
 1. Get local commit: `git rev-parse HEAD`
 2. Get graph commit: `${graphdb_bin} query -type status`
-3. **Decision:** If the commit hashes match, you can **skip** the ingestion pipeline and proceed directly to "Analysis & Querying".
+3. **Incremental Ingestion:** If you have small changes, the `build-all` command automatically detects the state and only processes modified files if possible.
 
-**Step 1: Ingest (Parse & Generate Graph):**
-Scans code and generates structural graph JSONL files. We output nodes and edges separately to avoid double-parsing penalties during the import phase.
+## Advanced: Manual Pipeline
+If a specific phase fails or you need granular control, you can run the steps manually:
+
+**Step 1: Ingest**
 ```bash
 ${graphdb_bin} ingest -dir . -nodes nodes.jsonl -edges edges.jsonl
 ```
-*   *Options:* 
-    *   `-workers` (concurrency)
-    *   `-file-list` (specific files)
-    *   `-since-commit <hash>`: **Incremental Ingestion.** Only parses files changed since the specified commit and writes directly to the graph database, skipping JSONL files. Auto-detects if omitted and the graph has a stored state.
 
-**Step 2: Import (Load Structural Graph to Database):**
-Loads the structural graph into the active graph database. This must be done **before** enrichment in the new streaming pipeline. Using separate nodes and edges files prevents a massive CPU penalty from scanning a combined file multiple times.
+**Step 2: Import**
 ```bash
 ${graphdb_bin} import -nodes nodes.jsonl -edges edges.jsonl
 ```
-*   *Options:* `-batch-size`.
 
-**Step 3: Enrich (Build Intent Layer - In-Database):**
-Performs **Global Semantic Clustering** directly against the live database. Identifies latent functional domains, extracts features, and generates summaries. Memory usage is bounded by batch sizes.
+**Step 3: Feature Enrichment**
 ```bash
 ${graphdb_bin} enrich-features -dir .
 ```
-*   *Options:*
-    *   `-batch-size`: Number of nodes to process per LLM/Batch request (default: 20).
-    *   `-embed-batch-size`: Batch size for embedding generation (default: 100).
 
-**Step 4: Enrich Contamination (Legacy Modernization Analysis):**
-Identifies architectural volatility (e.g., 3rd-party libraries, external namespaces) and propagates it upwards through the call graph. This is essential for finding extraction boundaries, pinch points, and calculating risk scores.
+**Step 4: Contamination Analysis**
 ```bash
 ${graphdb_bin} enrich-contamination
 ```
 
-**Step 5: Enrich History (Git Integration):**
-Analyzes the git commit history to determine file change frequencies and co-change dependencies. This populates data for the `hotspots` query.
+**Step 5: Git History**
 ```bash
-${graphdb_bin} enrich-history -dir . -since "1 year ago"
+${graphdb_bin} enrich-history -dir .
 ```
-*   *Options:*
-    *   `-since`: How far back to analyze history (default: "1 year ago").
 
-**Step 6: Enrich Tests (Link Tests to Production Code):**
-Analyzes naming conventions and call patterns to explicitly link test functions to the production code they exercise. This enables the `coverage` query for pinpointing test contexts.
+**Step 6: Test Linkage**
 ```bash
 ${graphdb_bin} enrich-tests
 ```

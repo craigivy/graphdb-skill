@@ -105,29 +105,19 @@ Within the `plan-commands` lifecycle, the Scout acts as the primary "Researcher"
 
 ## 🛠️ Build & Ingestion Workflow
 
-To analyze a codebase, you must first ingest it into the Graph Database. Run these commands from the **project root**:
+To analyze a codebase, you must first ingest it into the Graph Database. This is done with a single command that handles parsing, embedding, clustering, and importing:
 
-1.  **Extract Graph Data** (Parses source code, generates embeddings, outputs JSONL):
-    ```bash
-    .gemini/skills/graphdb/scripts/graphdb ingest -dir <target-dir> -nodes graph_data/nodes.jsonl -edges graph_data/edges.jsonl
-    ```
+```bash
+.gemini/skills/graphdb/scripts/graphdb build-all -dir <target-dir>
+```
 
-2. **Build RPG Features** (Groups functions into semantic features using LLM):
-    *   *Deep Dive:* [Clustering & Domain Discovery Logic](plans/RPG_CLUSTERING.md)
+This command sequentially executes the full pipeline:
+1.  **Ingest:** Parses source code and generates structural graph data.
+2.  **Import:** Loads the data into the active graph database.
+3.  **Enrich:** Generates semantic embeddings and builds the RPG intent layer.
+4.  **Modernize:** Calculates architectural risk and test linkages.
 
-    ```bash
-
-    .gemini/skills/graphdb/scripts/graphdb enrich-features -dir <target-dir> -input graph.jsonl -output rpg.jsonl
-
-    ```
-
-    Flags: `--mock-embedding` for dry runs.
-
-3.  **Import to Neo4j** (Loads JSONL into the database):
-    ```bash
-    .gemini/skills/graphdb/scripts/graphdb import -input graph_data/nodes.jsonl -clean
-    .gemini/skills/graphdb/scripts/graphdb import -input graph_data/rpg.jsonl
-    ```
+For advanced users requiring granular control, each step can be run individually. Refer to the [Skill Documentation](.gemini/skills/graphdb/SKILL.md) for manual pipeline details.
 
 ## 🔍 Usage & Analysis
 
