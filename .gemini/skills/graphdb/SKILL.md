@@ -5,7 +5,7 @@ description: Expert in analyzing project architecture using a Code Property Grap
 
 # Graph Database Skill (Go-Powered)
 
-You are an expert in analyzing the project's architecture using a high-performance Code Property Graph (CPG) built with Go and a graph database.
+You are an expert in analyzing the project's architecture using a high-performance Code Property Graph (CPG) built with a graph database.
 Your goal is to answer questions about dependencies, seams, testing contexts, and architectural risks using both structural analysis and the RPG (Repository Planning Graph) Intent Layer.
 
 ## Tool Usage
@@ -24,7 +24,7 @@ Define `${graphdb_bin}` as the path to the binary appropriate for the current op
 
 ### Installation
 The skill relies on a pre-compiled Go binary (`${graphdb_bin}`).
-If it does not exist, build it from the project root: `make build` (Linux/macOS) or use the cross-compilation script for Windows.
+If it does not exist you must STOP and return an ERROR to the user.
 
 ### Environment Variables
 The tool automatically inherits the following environment variables. Assume they are already configured correctly via the `.env` file or host system. 
@@ -41,11 +41,16 @@ When running `build-all` or `enrich-features` on exceptionally large repositorie
 * **Optimized Output**: The GraphDB CLI has "smart TTY detection". When you execute it via the `run_shell_command` tool, it detects it is running headlessly and disables aggressive progress bar updates, only emitting logs at 10% increments. This drastically reduces verbosity and prevents you from hitting output truncation limits. You can safely run these commands inline and wait for them to finish.
 * **No Redirection**: Do not redirect output to log files for monitoring; the inline logs are the intended way to track progress while keeping the context lean.
 
+### Destructive Commands
+**CRITICAL RULES FOR DESTRUCTIVE COMMANDS:**
+* `build-all` or any command that could be destructive to the graph database data *MUST* under all circumstances ALWAYS have explicit user approval before execution. Do not bypass this rule.
+
 ### Credentials
 **CRITICAL RULES FOR CREDENTIALS:**
 1. You must **NEVER** explicitly set, export, or pass environment variables (like `NEO4J_PASSWORD=...`) in your bash commands. 
 2. You must rely purely on the Go binary's internal `.env` loading. 
 3. If a command fails due to an `Unauthorized` or authentication error, **STOP**. Do not try to guess or brute-force the password. Report the failure directly to the user and state that the credentials in their environment or `.env` file appear to be invalid or missing.
+4. You must never update the .env file without explicit approval from the user.
 
 ### Model & Location Errors
 **CRITICAL RULES FOR MODEL ERRORS:**
@@ -66,7 +71,7 @@ ${graphdb_bin} build-all -dir .
 Before rebuilding, check if the graph is already in sync with your local code:
 1. Get local commit: `git rev-parse HEAD`
 2. Get graph commit: `${graphdb_bin} query -type status -dir .`
-3. **Incremental Ingestion:** If you have small changes, the `build-all` command automatically detects the state (using the `-dir` flag for baseline lookup) and only processes modified files if possible.
+3. **Incremental Ingestion:** NEVER begin any ingestion without explicit approval from the user. If you have small changes, the `build-all` command automatically detects the state (using the `-dir` flag for baseline lookup) and only processes modified files if possible.
 
 ## Advanced: Manual Pipeline
 If a specific phase fails or you need granular control, you can run the steps manually:
