@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-05-14
+### Added
+- **Query:** Added `-dir` flag to explicitly set the base directory for source files, enabling analysis and source fetching from outside the project root.
+- **Enrich:** Added support for `-dir` flag in `enrich-features` to ensure correct file resolution during RPG extraction.
+- **Config:** Added support for `NEO4J_DATABASE` environment variable to allow targeting specific Neo4j databases within a single instance.
+
+### Changed
+- **Docs:** Updated default generative model to `gemini-3.1-flash-lite` and default region to `global` in configuration documentation.
+
+### Fixed
+- **Build:** Resolved compilation errors and signature mismatches in `internal/query` and `internal/rpg`.
+- **Query:** Fixed source snippet resolution for `fetch-source` and `locate-usage` when working with external directories.
+
 ## [1.6.376-beta] - 2026-05-13 [Pre-release]
 ### Fixed
 - **Build:** Resolved compilation errors and test failures in `internal/query` and `internal/rpg` introduced in the previous beta.
