@@ -66,7 +66,11 @@ GRAPHDB_LOG=graphdb.log
 LLM_CONCURRENCY=5 # Optional: Number of concurrent LLM requests during RPG enrichment
 ```
 
-### Custom LLM Backends (Optional)
+### Custom LLM Backends (Experimental)
+
+> [!WARNING]
+> This capability is strictly **Experimental** and not guaranteed to be stable.
+
 If you want to use a privately hosted model (like a custom Cloud Run Gemma endpoint, local Ollama, Azure OpenAI, etc.) instead of the default Vertex AI, you can override the Go SDK's `BaseURL` and backend type by adding these variables to your `.env` file:
 
 ```ini
