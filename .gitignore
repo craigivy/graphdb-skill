@@ -24,6 +24,8 @@ temp_tools/
 
 # Test Artifacts
 test/output/
+*.test
+*.out
 
 # Dependencies
 /node_modules/
