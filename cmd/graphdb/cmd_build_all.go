@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"graphdb/internal/config"
 	"os"
+	"os/exec"
 )
 
 func handleBuildAll(args []string) {
@@ -23,23 +24,49 @@ func handleBuildAll(args []string) {
 	}
 	*dirPtr = cfg.BaseDir
 
+	isIncremental := false
+	if cfg.Neo4jURI != "" {
+		provider, err := setupProvider(cfg)
+		if err == nil {
+			stateCommit, _ := provider.GetGraphState()
+			if stateCommit != "" {
+				cmd := exec.Command("git", "merge-base", "--is-ancestor", stateCommit, "HEAD")
+				cmd.Dir = *dirPtr
+				if err := cmd.Run(); err == nil {
+					isIncremental = true
+					fmt.Printf("\n[Incremental Mode] Auto-detected incremental mode from commit %s\n", stateCommit)
+				}
+			}
+			provider.Close()
+		}
+	}
+
 	// 1. Ingest
 	fmt.Println("\n[Phase 1/6] Ingesting Codebase...")
-	ingestArgs := []string{"-dir", *dirPtr, "-nodes", *nodesPtr, "-edges", *edgesPtr}
+	var ingestArgs []string
+	if isIncremental {
+		ingestArgs = []string{"-dir", *dirPtr}
+	} else {
+		ingestArgs = []string{"-dir", *dirPtr, "-nodes", *nodesPtr, "-edges", *edgesPtr}
+	}
 	ingestCmd(ingestArgs)
 
-	// 2. Import Structural Graph
-	fmt.Println("\n[Phase 2/6] Importing to Neo4j...")
-	importArgs1 := []string{"-nodes", *nodesPtr, "-edges", *edgesPtr}
-	importCmd(importArgs1)
+	if !isIncremental {
+		// 2. Import Structural Graph
+		fmt.Println("\n[Phase 2/6] Importing to Neo4j...")
+		importArgs1 := []string{"-nodes", *nodesPtr, "-edges", *edgesPtr}
+		importCmd(importArgs1)
 
-	// 2.5 Cleanup intermediate files
-	fmt.Println("\nCleaning up intermediate JSONL files...")
-	if err := os.Remove(*nodesPtr); err != nil && !os.IsNotExist(err) {
-		fmt.Printf("Warning: failed to remove %s: %v\n", *nodesPtr, err)
-	}
-	if err := os.Remove(*edgesPtr); err != nil && !os.IsNotExist(err) {
-		fmt.Printf("Warning: failed to remove %s: %v\n", *edgesPtr, err)
+		// 2.5 Cleanup intermediate files
+		fmt.Println("\nCleaning up intermediate JSONL files...")
+		if err := os.Remove(*nodesPtr); err != nil && !os.IsNotExist(err) {
+			fmt.Printf("Warning: failed to remove %s: %v\n", *nodesPtr, err)
+		}
+		if err := os.Remove(*edgesPtr); err != nil && !os.IsNotExist(err) {
+			fmt.Printf("Warning: failed to remove %s: %v\n", *edgesPtr, err)
+		}
+	} else {
+		fmt.Println("\n[Phase 2/6] Skipping Import (Incremental mode writes directly to DB)...")
 	}
 
 	// 3. Enrich Features
