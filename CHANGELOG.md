@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.391-beta] - 2026-05-14 [Pre-release]
+### Added
+- **Config:** Added `GRAPHDB_DIR` environment variable support. This allows setting a persistent base directory for all commands, simplifying usage in environments where the target codebase directory is constant. The `-dir` flag still overrides this variable if both are provided.
+
 ## [1.7.389-beta] - 2026-05-14 [Pre-release]
 ### Fixed
 - **Query:** Enabled directory-aware status lookup. The `status` query now correctly retrieves commit hashes associated with a specific directory (stored in `:Metadata` nodes) or global state (`:GraphState`).
