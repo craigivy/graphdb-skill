@@ -145,7 +145,7 @@ Structural queries utilize "Fully Qualified Names" (FQN). While the internal dat
 | `seams` | **Architecture.** Identify Pinch Points (chokepoints with high internal fan-in and high volatile fan-out). | (Ignored) | `-module <regex>` |
 | `semantic-seams` | **Architecture.** Identify SRP violations and conceptual seams within a single file/class using vector embeddings. | (Ignored) | `-similarity <float>` |
 | `locate-usage` | **Trace.** Find path/usage between two functions. | Function 1 | `-target2 <Function 2>` |
-| `fetch-source` | **Read.** Fetch the source code of a function by ID/Name. | Function Name | |
+| `fetch-source` | **Read.** Fetch the full implementation (signature + body) of a function. | Function Name / FQN | Recommended: Use `fqn` to resolve overloads or duplicate names. |
 | `explore-domain` | **Discovery.** Explore the domain model around a concept. | Concept/Entity Name | |
 | `traverse` | **Raw Traversal.** Explore graph relationships directly. | Node ID / Name | `-edge-types`, `-direction`, `-depth` |
 | `cypher` | **Advanced.** Run a raw, read-only Cypher query directly against the graph database. | (Ignored) | `-cypher "<query>"` |

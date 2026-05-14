@@ -47,7 +47,9 @@ curl.exe -sL https://github.com/jjdelorme/graphdb-skill/releases/download/v1.8.3
 
 ## ⚙️ Configuration & Credentials
 
-Before using the skill, you must create a `.env` file in your project root. This file is critical setup as it contains your credentials for configuring the Neo4j database connection, the embedding models for vector search, and the LLMs for semantic clustering.
+Before using the skill, you must create a `.env` file in your project root. This file contains your credentials for configuring the Neo4j database connection, the embedding models for vector search, and the LLMs for semantic clustering.
+
+You can also enable detailed logging for the `graphdb` binary by specifying a file path in the `GRAPHDB_LOG` variable.
 
 ```ini
 # Neo4j Configuration
@@ -62,7 +64,9 @@ GOOGLE_CLOUD_LOCATION=global
 GEMINI_EMBEDDING_MODEL=gemini-embedding-001
 GEMINI_EMBEDDING_DIMENSIONS=768
 GEMINI_GENERATIVE_MODEL=gemini-3.1-flash-lite
-GRAPHDB_LOG=graphdb.log
+
+# Logging & Execution
+GRAPHDB_LOG=graphdb.log # Enable logging to this file
 GRAPHDB_DIR=. # Optional: Base directory for source files and state lookup
 LLM_CONCURRENCY=5 # Optional: Number of concurrent LLM requests during RPG enrichment
 ```

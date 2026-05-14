@@ -194,6 +194,7 @@ func (o *Orchestrator) RunEmbedding(batchSize int) error {
 	log.Printf("Finished embedding for %d nodes", totalToProcess)
 	return nil
 }
+
 // CalculateDomainK determines the number of top-level domains based on unique file count.
 func CalculateDomainK(fileCount int) int {
 	if fileCount == 0 {
@@ -210,11 +211,6 @@ func CalculateDomainK(fileCount int) int {
 }
 
 func (o *Orchestrator) RunClustering(dir string) error {
-	log.Println("Clearing existing feature topology...")
-	if err := o.Provider.ClearFeatureTopology(); err != nil {
-		return fmt.Errorf("failed to clear topology: %w", err)
-	}
-
 	log.Println("Fetching embeddings for clustering...")
 	embeddings, err := o.Provider.GetEmbeddingsOnly()
 	if err != nil {
@@ -290,6 +286,11 @@ func (o *Orchestrator) RunClustering(dir string) error {
 		return fmt.Errorf("clustering failed: %w", err)
 	}
 
+	log.Println("Clearing existing feature topology...")
+	if err := o.Provider.ClearFeatureTopology(); err != nil {
+		return fmt.Errorf("failed to clear topology: %w", err)
+	}
+
 	// Flatten features
 	nodes, allEdges := Flatten(features, edges)
 	var nodePointers []*graph.Node
@@ -318,7 +319,7 @@ func (o *Orchestrator) RunSummarization(batchSize int, dir string) error {
 		return fmt.Errorf("failed to count unnamed features: %w", err)
 	}
 	if total == 0 {
-		log.Println("No unnamed features to summarize")
+		log.Println("No unnamed features to process")
 		return nil
 	}
 

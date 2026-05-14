@@ -1,11 +1,16 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
+	"context"
 	"flag"
 	"fmt"
 	"graphdb/internal/config"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 )
 
 func handleBuildAll(args []string) {
@@ -25,16 +30,44 @@ func handleBuildAll(args []string) {
 	*dirPtr = cfg.BaseDir
 
 	isIncremental := false
+	stateCommit := ""
 	if cfg.Neo4jURI != "" {
 		provider, err := setupProvider(cfg)
 		if err == nil {
-			stateCommit, _ := provider.GetGraphState()
+			stateCommit, _ = provider.GetGraphState()
 			if stateCommit != "" {
 				cmd := exec.Command("git", "merge-base", "--is-ancestor", stateCommit, "HEAD")
 				cmd.Dir = *dirPtr
 				if err := cmd.Run(); err == nil {
 					isIncremental = true
 					fmt.Printf("\n[Incremental Mode] Auto-detected incremental mode from commit %s\n", stateCommit)
+
+					// Check for actual changes in supported files
+					diffCmd := exec.Command("git", "diff", "--name-only", stateCommit+"..HEAD")
+					diffCmd.Dir = *dirPtr
+					output, err := diffCmd.Output()
+					if err == nil {
+						relevantChanges := false
+						scanner := bufio.NewScanner(bytes.NewReader(output))
+						for scanner.Scan() {
+							path := scanner.Text()
+							ext := filepath.Ext(path)
+							switch strings.ToLower(ext) {
+							case ".cs", ".java", ".py", ".ts", ".cpp", ".hpp", ".h", ".c", ".cc", ".sql", ".vb", ".asp", ".aspx", ".ascx":
+								relevantChanges = true
+								break
+							}
+							if relevantChanges {
+								break
+							}
+						}
+
+						if !relevantChanges {
+							fmt.Println("\n✅ No relevant changes detected since last build. Codebase is in sync with graph state.")
+							fmt.Println("Skipping further phases. Build-All Sequence Complete!")
+							return
+						}
+					}
 				}
 			}
 			provider.Close()
@@ -67,6 +100,20 @@ func handleBuildAll(args []string) {
 		}
 	} else {
 		fmt.Println("\n[Phase 2/6] Skipping Import (Incremental mode writes directly to DB)...")
+
+		// In incremental mode, we need to manually update the graph state to HEAD
+		// because ingest doesn't do it.
+		if headCommit, err := getGitCommit(); err == nil && headCommit != "" {
+			fmt.Printf("Updating graph state to %s...\n", headCommit)
+			driver, err := setupDriver(cfg)
+			if err == nil {
+				defer driver.Close(context.Background())
+				loader, err := setupLoader(context.Background(), cfg, driver)
+				if err == nil {
+					_ = loader.UpdateGraphState(context.Background(), headCommit, *dirPtr)
+				}
+			}
+		}
 	}
 
 	// 3. Enrich Features
