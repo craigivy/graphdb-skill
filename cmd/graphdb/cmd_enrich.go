@@ -11,9 +11,14 @@ import (
 
 func handleEnrichFeatures(args []string) {
 	fs := flag.NewFlagSet("enrich-features", flag.ExitOnError)
-	dirPtr := fs.String("dir", ".", "Directory to analyze")
+	dirPtr := fs.String("dir", "", "Directory to analyze")
 	batchSizePtr := fs.Int("batch-size", 20, "Batch size for LLM feature extraction")
 	cfg := config.LoadConfig()
+	if *dirPtr != "" {
+		cfg.BaseDir = *dirPtr
+	}
+	*dirPtr = cfg.BaseDir
+
 	llmConcurrencyPtr := fs.Int("llm-concurrency", cfg.LLMConcurrency, "Number of concurrent LLM requests during extraction/summarization")
 	embedBatchSizePtr := fs.Int("embed-batch-size", 100, "Batch size for embedding generation")
 	seedPtr := fs.Int64("seed", 42, "Seed for deterministic K-Means clustering")

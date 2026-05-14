@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"graphdb/internal/config"
 	"os"
 )
 
@@ -11,10 +12,16 @@ func handleBuildAll(args []string) {
 	fmt.Println("========================================")
 
 	fs := flag.NewFlagSet("build-all", flag.ExitOnError)
-	dirPtr := fs.String("dir", ".", "Directory to process")
+	dirPtr := fs.String("dir", "", "Directory to process")
 	nodesPtr := fs.String("nodes", "nodes.jsonl", "Intermediate output file for nodes")
 	edgesPtr := fs.String("edges", "edges.jsonl", "Intermediate output file for edges")
 	fs.Parse(args)
+
+	cfg := config.LoadConfig()
+	if *dirPtr != "" {
+		cfg.BaseDir = *dirPtr
+	}
+	*dirPtr = cfg.BaseDir
 
 	// 1. Ingest
 	fmt.Println("\n[Phase 1/6] Ingesting Codebase...")

@@ -15,12 +15,17 @@ import (
 
 func handleEnrichHistory(args []string) {
 	fs := flag.NewFlagSet("enrich-history", flag.ExitOnError)
-	dirPtr := fs.String("dir", ".", "Directory to analyze (must be a git repository)")
+	dirPtr := fs.String("dir", "", "Directory to analyze (must be a git repository)")
 	sincePtr := fs.String("since", "1 year ago", "How far back to analyze history")
 
 	fs.Parse(args)
 
 	cfg := config.LoadConfig()
+	if *dirPtr != "" {
+		cfg.BaseDir = *dirPtr
+	}
+	*dirPtr = cfg.BaseDir
+
 	if cfg.Neo4jURI == "" {
 		log.Fatal("NEO4J_URI environment variable is not set")
 	}

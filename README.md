@@ -63,6 +63,7 @@ GEMINI_EMBEDDING_MODEL=gemini-embedding-001
 GEMINI_EMBEDDING_DIMENSIONS=768
 GEMINI_GENERATIVE_MODEL=gemini-3.1-flash-lite
 GRAPHDB_LOG=graphdb.log
+GRAPHDB_DIR=. # Optional: Base directory for source files and state lookup
 LLM_CONCURRENCY=5 # Optional: Number of concurrent LLM requests during RPG enrichment
 ```
 

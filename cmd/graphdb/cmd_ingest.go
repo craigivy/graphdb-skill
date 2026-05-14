@@ -22,7 +22,7 @@ import (
 
 func handleIngest(args []string) {
 	flags := flag.NewFlagSet("ingest", flag.ExitOnError)
-	dirPtr := flags.String("dir", ".", "Directory to walk (ignored if -file-list is used)")
+	dirPtr := flags.String("dir", "", "Directory to walk (ignored if -file-list is used)")
 	fileListPtr := flags.String("file-list", "", "Path to a file containing a list of files to process")
 	sinceCommitPtr := flags.String("since-commit", "", "Commit hash for incremental ingestion (skips JSONL, writes to DB)")
 	workersPtr := flags.Int("workers", 4, "Number of workers")
@@ -36,6 +36,7 @@ func handleIngest(args []string) {
 	if *dirPtr != "" {
 		cfg.BaseDir = *dirPtr
 	}
+	*dirPtr = cfg.BaseDir // Ensure *dirPtr reflects the final base directory
 
 	var emitter storage.Emitter
 	var neoDriver neo4j.DriverWithContext

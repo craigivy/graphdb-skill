@@ -28,11 +28,16 @@ func handleImport(args []string) {
 
 	fs.Parse(args)
 
+	cfg := config.LoadConfig()
+	if *dirPtr != "" {
+		cfg.BaseDir = *dirPtr
+	}
+	*dirPtr = cfg.BaseDir
+
 	if *inputPtr == "" && (*nodesPtr == "" || *edgesPtr == "") {
 		log.Fatal("Either -input or both -nodes and -edges must be provided")
 	}
 
-	cfg := config.LoadConfig()
 	if cfg.Neo4jURI == "" {
 		log.Fatal("NEO4J_URI environment variable is not set")
 	}

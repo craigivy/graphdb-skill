@@ -31,6 +31,7 @@ The tool automatically inherits the following environment variables. Assume they
 *   `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` (Required for database connection)
 *   `GOOGLE_CLOUD_PROJECT` (Required for Vertex AI embeddings)
 *   `GOOGLE_CLOUD_LOCATION` (Default: `global`)
+*   `GRAPHDB_DIR` (Optional: Sets the base directory for source files and state management. Equivalent to the `-dir` flag but persistent across all commands.)
 
 ## Operational Guidelines for Agents
 

@@ -13,12 +13,23 @@ import (
 func handleServe(args []string) {
 	fs := flag.NewFlagSet("serve", flag.ExitOnError)
 	portPtr := fs.Int("port", 8080, "Port to run the HTTP server on")
+	dirPtr := fs.String("dir", "", "Base directory for source files")
 	locationPtr := fs.String("location", "global", "GCP Location")
 	modelPtr := fs.String("model", "", "Embedding model name")
 
 	fs.Parse(args)
 
 	cfg := config.LoadConfig()
+	if *dirPtr != "" {
+		cfg.BaseDir = *dirPtr
+	}
+
+	if cfg.BaseDir != "" && cfg.BaseDir != "." {
+		if err := os.Chdir(cfg.BaseDir); err != nil {
+			log.Fatalf("Failed to change directory to %s: %v", cfg.BaseDir, err)
+		}
+	}
+
 	if *modelPtr != "" {
 		cfg.GeminiEmbeddingModel = *modelPtr
 	}

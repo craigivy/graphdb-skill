@@ -46,14 +46,18 @@ type Config struct {
 		dbName = "neo4j"
 	}
 
+	baseDir := os.Getenv("GRAPHDB_DIR")
+	if baseDir == "" {
+		baseDir = "."
+	}
+
 	return Config{
-	        Neo4jURI:                  os.Getenv("NEO4J_URI"),
-	        Neo4jUser:                 os.Getenv("NEO4J_USER"),
-	        Neo4jPassword:             os.Getenv("NEO4J_PASSWORD"),
-	        Neo4jDatabase:             dbName,
-	        BaseDir:                   ".",
-	        GoogleCloudProject:        os.Getenv("GOOGLE_CLOUD_PROJECT"),
-	        GoogleCloudLocation:       os.Getenv("GOOGLE_CLOUD_LOCATION"),
+		Neo4jURI:                  os.Getenv("NEO4J_URI"),
+		Neo4jUser:                 os.Getenv("NEO4J_USER"),
+		Neo4jPassword:             os.Getenv("NEO4J_PASSWORD"),
+		Neo4jDatabase:             dbName,
+		BaseDir:                   baseDir,
+		GoogleCloudProject:        os.Getenv("GOOGLE_CLOUD_PROJECT"),	        GoogleCloudLocation:       os.Getenv("GOOGLE_CLOUD_LOCATION"),
 	        GeminiEmbeddingModel:      os.Getenv("GEMINI_EMBEDDING_MODEL"),
 	        GeminiEmbeddingDimensions: dims,
 	        GeminiGenerativeModel:     os.Getenv("GEMINI_GENERATIVE_MODEL"),
