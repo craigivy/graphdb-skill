@@ -151,35 +151,3 @@ All queries use the same pattern: `.gemini/skills/graphdb/scripts/graphdb query 
 
 ### Text Search (Fallback)
 Use standard `search_file_content` (Ripgrep) **ONLY** when the `graphdb` skill cannot provide the necessary data (e.g., searching for non-code assets or literal TODOs).
-
-## 🕵️ Agent Execution Tracing
-
-To understand the complex interactions between agents (e.g., CLI -> Supervisor -> Engineer), the project includes a configured execution tracer.
-
-*   **Log File:** `.gemini/execution-trace.jsonl`
-*   **Mechanism:** A hook script (`.gemini/hooks/agent-tracer.js`) intercepts `BeforeAgent`, `AfterAgent`, `BeforeTool`, and `AfterTool` events.
-*   **Purpose:**
-    *   Visualize the call stack of nested agents.
-    *   Debug "Human in the Loop" interactions (e.g., does the stack unwind or pause?).
-    *   Audit tool usage and arguments in real-time.
-
-### 📊 Trace Viewer
-
-A lightweight, single-file HTML viewer is included to visualize the trace logs.
-
-1.  **Start Server:** (Optional but recommended for browser compatibility)
-    ```bash
-    # Option A: Node.js
-    npx http-server .
-    # Option B: Python
-    python3 -m http.server 8080
-    ```
-2.  **Open:** Navigate to `http://localhost:8080/trace-viewer.html` (or open the file directly in a modern browser).
-3.  **Load:** Drag & Drop `.gemini/execution-trace.jsonl` onto the page.
-4.  **Analyze:** Filter by session or file to see the chronological lineage of agent operations.
-
-To disable tracing, remove the `hooks` section from `.gemini/settings.json`.
-.gemini/execution-trace.jsonl` onto the page.
-4.  **Analyze:** Filter by session or file to see the chronological lineage of agent operations.
-
-To disable tracing, remove the `hooks` section from `.gemini/settings.json`.
