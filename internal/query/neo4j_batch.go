@@ -354,7 +354,7 @@ func (p *Neo4jProvider) batchWriteNodes(ctx context.Context, nodes []*graph.Node
 
 		batchCtx, cancel := context.WithTimeout(ctx, 5*time.Minute)
 
-		session := p.driver.NewSession(batchCtx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+		session := p.driver.NewSession(batchCtx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite, DatabaseName: p.dbName})
 		_, err := session.ExecuteWrite(batchCtx, func(tx neo4j.ManagedTransaction) (any, error) {
 			query := `
 				UNWIND $batch AS row
@@ -414,7 +414,7 @@ func (p *Neo4jProvider) batchWriteEdges(ctx context.Context, edges []*graph.Edge
 
 			batchCtx, cancel := context.WithTimeout(ctx, 5*time.Minute)
 
-			session := p.driver.NewSession(batchCtx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+			session := p.driver.NewSession(batchCtx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite, DatabaseName: p.dbName})
 			_, err := session.ExecuteWrite(batchCtx, func(tx neo4j.ManagedTransaction) (any, error) {
 				query := fmt.Sprintf(`
 					UNWIND $batch AS row

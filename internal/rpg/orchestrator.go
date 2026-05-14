@@ -23,7 +23,7 @@ type Orchestrator struct {
 	LLMConcurrency int
 }
 
-func (o *Orchestrator) RunExtraction(batchSize int) error {
+func (o *Orchestrator) RunExtraction(batchSize int, dir string) error {
 	log.Printf("Starting resumable extraction (batch size: %d)...", batchSize)
 
 	total, err := o.Provider.CountUnextractedFunctions()
@@ -51,6 +51,20 @@ func (o *Orchestrator) RunExtraction(batchSize int) error {
 
 		if len(nodes) == 0 {
 			break
+		}
+
+		loader := o.Loader
+		if loader == nil {
+			loader = snippet.SliceFile
+		}
+
+		// Wrap loader to handle base directory
+		wrappedLoader := func(path string, start, end int) (string, error) {
+			fullPath := path
+			if dir != "" && dir != "." {
+				fullPath = filepath.Join(dir, path)
+			}
+			return loader(fullPath, start, end)
 		}
 
 		var wg sync.WaitGroup
@@ -89,12 +103,7 @@ func (o *Orchestrator) RunExtraction(batchSize int) error {
 					return
 				}
 
-				loader := o.Loader
-				if loader == nil {
-					loader = snippet.SliceFile
-				}
-
-				code, err := loader(file, startLine, endLine)
+				code, err := wrappedLoader(file, startLine, endLine)
 				if err != nil {
 					log.Printf("Warning: failed to slice file %s:%d-%d: %v", file, startLine, endLine, err)
 					_ = o.Provider.UpdateAtomicFeatures(node.ID, []string{"unreadable_source"}, false)

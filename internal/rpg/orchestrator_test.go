@@ -202,7 +202,7 @@ func TestOrchestratorExtraction(t *testing.T) {
 		Extractor: extractor,
 	}
 
-	err := orchestrator.RunExtraction(10)
+	err := orchestrator.RunExtraction(10, ".")
 	if err != nil {
 		t.Fatalf("RunExtraction failed: %v", err)
 	}
@@ -361,7 +361,7 @@ func TestOrchestratorExtraction_HappyPath(t *testing.T) {
 		},
 	}
 
-	err := orchestrator.RunExtraction(10)
+	err := orchestrator.RunExtraction(10, ".")
 	if err != nil {
 		t.Fatalf("RunExtraction failed: %v", err)
 	}
@@ -409,7 +409,7 @@ func TestOrchestratorExtraction_AbortsOnFirstError(t *testing.T) {
 		},
 	}
 
-	err := orchestrator.RunExtraction(10)
+	err := orchestrator.RunExtraction(10, ".")
 	if err == nil {
 		t.Fatalf("RunExtraction should have failed")
 	}
@@ -525,7 +525,7 @@ func TestOrchestrator_RunExtraction_Concurrent(t *testing.T) {
 		LLMConcurrency: 5,
 	}
 
-	err := orchestrator.RunExtraction(10)
+	err := orchestrator.RunExtraction(10, ".")
 	if err != nil {
 		t.Fatalf("RunExtraction failed: %v", err)
 	}

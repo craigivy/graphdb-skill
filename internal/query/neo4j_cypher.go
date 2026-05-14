@@ -8,7 +8,7 @@ import (
 // RunCypher executes an arbitrary read-only Cypher query and returns the raw results.
 func (p *Neo4jProvider) RunCypher(query string) ([]map[string]any, error) {
 	// Execute via read transaction directly using session
-	session := p.driver.NewSession(p.ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	session := p.driver.NewSession(p.ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead, DatabaseName: p.dbName})
 	defer session.Close(p.ctx)
 
 	result, err := session.ExecuteRead(p.ctx, func(tx neo4j.ManagedTransaction) (any, error) {
