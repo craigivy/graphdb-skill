@@ -108,14 +108,21 @@ func (l *Neo4jLoader) ApplyConstraints(ctx context.Context) error {
 }
 
 // UpdateGraphState updates the commit hash.
-func (l *Neo4jLoader) UpdateGraphState(ctx context.Context, commit string) error {
+func (l *Neo4jLoader) UpdateGraphState(ctx context.Context, commit string, dir string) error {
 	session := l.Driver.NewSession(ctx, neo4j.SessionConfig{DatabaseName: l.DBName})
 	defer session.Close(ctx)
 
-	query := buildGraphStateQuery()
+	query := buildGraphStateQuery(dir != "")
+	params := map[string]any{
+		"commit": commit,
+	}
+	if dir != "" {
+		params["dir"] = dir
+	}
+
 	_, err := session.ExecuteWrite(ctx, func(tx neo4j.ManagedTransaction) (any, error) {
 		logger.Query.Printf("Neo4j Loader Query: %s", query)
-		return tx.Run(ctx, query, map[string]any{"commit": commit})
+		return tx.Run(ctx, query, params)
 	})
 	return err
 }
@@ -175,7 +182,13 @@ func buildEdgeQuery(relType string) string {
 		`, SanitizeLabel(relType))
 }
 
-func buildGraphStateQuery() string {
+func buildGraphStateQuery(isDirSpecific bool) string {
+	if isDirSpecific {
+		return `
+			MERGE (s:Metadata {dir: $dir})
+			SET s.commit = $commit, s.updatedAt = datetime()
+		`
+	}
 	return `
 		MERGE (s:GraphState)
 		SET s.commit = $commit, s.updatedAt = datetime()

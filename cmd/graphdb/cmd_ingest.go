@@ -33,6 +33,9 @@ func handleIngest(args []string) {
 	flags.Parse(args)
 
 	cfg := config.LoadConfig()
+	if *dirPtr != "" {
+		cfg.BaseDir = *dirPtr
+	}
 
 	var emitter storage.Emitter
 	var neoDriver neo4j.DriverWithContext

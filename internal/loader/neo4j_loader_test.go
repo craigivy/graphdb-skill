@@ -55,12 +55,19 @@ func TestGroupNodesByLabel(t *testing.T) {
 }
 
 func TestBuildGraphStateQuery(t *testing.T) {
-	query := buildGraphStateQuery()
+	// Test Global
+	query := buildGraphStateQuery(false)
 	if !strings.Contains(query, "MERGE (s:GraphState)") {
 		t.Error("Missing GraphState node merge")
 	}
 	if !strings.Contains(query, "SET s.commit = $commit") {
 		t.Error("Missing commit set")
+	}
+
+	// Test Dir-specific
+	queryDir := buildGraphStateQuery(true)
+	if !strings.Contains(queryDir, "MERGE (s:Metadata {dir: $dir})") {
+		t.Error("Missing Metadata node merge with dir")
 	}
 }
 

@@ -23,6 +23,7 @@ func handleImport(args []string) {
 	nodesPtr := fs.String("nodes", "", "Path to nodes JSONL file")
 	edgesPtr := fs.String("edges", "", "Path to edges JSONL file")
 	inputPtr := fs.String("input", "", "Path to combined JSONL file (nodes + edges)")
+	dirPtr := fs.String("dir", "", "Base directory for source files (used to associate state)")
 	batchSizePtr := fs.Int("batch-size", 500, "Batch size for insertion")
 
 	fs.Parse(args)
@@ -151,7 +152,7 @@ func handleImport(args []string) {
 	// Try to get current git commit
 	if commit, err := getGitCommit(); err == nil && commit != "" {
 		log.Printf("Updating graph state with commit %s...", commit)
-		if err := loader.UpdateGraphState(ctx, commit); err != nil {
+		if err := loader.UpdateGraphState(ctx, commit, *dirPtr); err != nil {
 			log.Printf("Warning: failed to update graph state: %v", err)
 		}
 	}

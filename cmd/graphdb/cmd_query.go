@@ -41,6 +41,9 @@ func handleQuery(args []string) {
 	}
 
 	cfg := config.LoadConfig()
+	if *dirPtr != "" {
+		cfg.BaseDir = *dirPtr
+	}
 	if *modelPtr != "" {
 		cfg.GeminiEmbeddingModel = *modelPtr
 	}

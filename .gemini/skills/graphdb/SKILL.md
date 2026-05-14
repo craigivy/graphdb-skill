@@ -64,8 +64,8 @@ ${graphdb_bin} build-all -dir .
 ### 2. Status & Incremental Ingestion
 Before rebuilding, check if the graph is already in sync with your local code:
 1. Get local commit: `git rev-parse HEAD`
-2. Get graph commit: `${graphdb_bin} query -type status`
-3. **Incremental Ingestion:** If you have small changes, the `build-all` command automatically detects the state and only processes modified files if possible.
+2. Get graph commit: `${graphdb_bin} query -type status -dir .`
+3. **Incremental Ingestion:** If you have small changes, the `build-all` command automatically detects the state (using the `-dir` flag for baseline lookup) and only processes modified files if possible.
 
 ## Advanced: Manual Pipeline
 If a specific phase fails or you need granular control, you can run the steps manually:
@@ -77,7 +77,7 @@ ${graphdb_bin} ingest -dir . -nodes nodes.jsonl -edges edges.jsonl
 
 **Step 2: Import**
 ```bash
-${graphdb_bin} import -nodes nodes.jsonl -edges edges.jsonl
+${graphdb_bin} import -dir . -nodes nodes.jsonl -edges edges.jsonl
 ```
 
 **Step 3: Feature Enrichment**
@@ -109,7 +109,7 @@ ${graphdb_bin} query -type <type> -target "<search_term>" [options]
 ```
 
 **Global Query Options:**
-*   `-dir <path>`: Base directory for source files (useful for `fetch-source` if querying from outside the project root).
+*   `-dir <path>`: Base directory for source files. **Critical:** Also used to retrieve/store directory-specific state (commit hashes) for incremental ingestion.
 *   `-limit <int>`: Restricts the number of results returned (Default: 10). Primarily affects semantic searches (`search-features`, `search-similar`, `hybrid-context`) and dependency bounds (`neighbors`).
 *   `-summary`: (Boolean) If provided, simplifies the JSON output to only include structural metrics/counts instead of full arrays of nodes. Excellent for preventing context-window bloat when querying nodes with massive fan-out (e.g., getting counts of dependencies rather than the full list).
 
@@ -143,7 +143,7 @@ Structural queries utilize "Fully Qualified Names" (FQN). While the internal dat
 | `explore-domain` | **Discovery.** Explore the domain model around a concept. | Concept/Entity Name | |
 | `traverse` | **Raw Traversal.** Explore graph relationships directly. | Node ID / Name | `-edge-types`, `-direction`, `-depth` |
 | `cypher` | **Advanced.** Run a raw, read-only Cypher query directly against the graph database. | (Ignored) | `-cypher "<query>"` |
-| `status` | **Verification.** Check the git commit hash stored in the graph. | (None) | |
+| `status` | **Verification.** Check the git commit hash stored in the graph. | (None) | `-dir` |
 
 ### 4. Web Visualizer (HTTP Server)
 The GraphDB skill includes a web-based visualizer for exploring the graph, viewing clusters, and performing interactive queries.

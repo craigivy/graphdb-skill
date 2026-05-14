@@ -1056,13 +1056,19 @@ func (p *Neo4jProvider) ExploreDomain(featureID string) (*DomainExplorationResul
 
 // GetGraphState retrieves the stored commit hash from the graph.
 func (p *Neo4jProvider) GetGraphState() (string, error) {
+	// Query for both legacy GraphState and newer Metadata nodes (possibly per-directory).
+	// If a directory is set, we prefer Metadata matching that directory.
 	query := `
 		// Get Graph State
-		MATCH (s:GraphState)
-		RETURN s.commit as commit
+		MATCH (s)
+		WHERE s:GraphState OR (s:Metadata AND ($dir = "" OR s.dir = $dir))
+		RETURN s.commit as commit, labels(s)[0] as label
+		ORDER BY label DESC, s.updatedAt DESC
 		LIMIT 1
 	`
-	result, err := p.executeQuery(query, nil)
+	result, err := p.executeQuery(query, map[string]any{
+		"dir": p.baseDir,
+	})
 	if err != nil {
 		return "", fmt.Errorf("failed to query graph state: %w", err)
 	}
