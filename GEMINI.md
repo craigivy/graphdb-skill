@@ -12,7 +12,6 @@ It employs a **Hybrid Architecture** that combines:
 ## 📂 Repository Structure
 
 *   **`.gemini/skills/graphdb/`**: The core skill. Contains logic for parsing code (Tree-sitter), building the graph, and querying it.
-*   **`.gemini/skills/neo4j-manager/`**: A utility skill for managing Neo4j Community Edition databases (handling the single-active-database limitation).
 *   **`plans/`**: Strategic documentation and architectural plans.
 
 ## 🚀 Getting Started

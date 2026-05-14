@@ -1,11 +1,11 @@
 ---
 name: graphdb
-description: Expert in analyzing project architecture using a Neo4j Code Property Graph (CPG) enhanced with Vector Search. Answers questions about dependencies, seams, testing contexts, implicit links, and risks.
+description: Expert in analyzing project architecture using a Code Property Graph (CPG) enhanced with Vector Search. Answers questions about dependencies, seams, testing contexts, implicit links, and risks.
 ---
 
 # Graph Database Skill (Go-Powered)
 
-You are an expert in analyzing the project's architecture using a high-performance Code Property Graph (CPG) built with Go and Neo4j.
+You are an expert in analyzing the project's architecture using a high-performance Code Property Graph (CPG) built with Go and a graph database.
 Your goal is to answer questions about dependencies, seams, testing contexts, and architectural risks using both structural analysis and the RPG (Repository Planning Graph) Intent Layer.
 
 ## Tool Usage
@@ -28,7 +28,7 @@ If it does not exist, build it from the project root: `make build` (Linux/macOS)
 
 ### Environment Variables
 The tool automatically inherits the following environment variables. Assume they are already configured correctly via the `.env` file or host system. 
-*   `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` (Required for `import` and `query`)
+*   `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` (Required for database connection)
 *   `GOOGLE_CLOUD_PROJECT` (Required for Vertex AI embeddings)
 *   `GOOGLE_CLOUD_LOCATION` (Default: `global`)
 
@@ -76,10 +76,10 @@ ${graphdb_bin} ingest -dir . -nodes nodes.jsonl -edges edges.jsonl
 *   *Options:* 
     *   `-workers` (concurrency)
     *   `-file-list` (specific files)
-    *   `-since-commit <hash>`: **Incremental Ingestion.** Only parses files changed since the specified commit and writes directly to Neo4j, skipping JSONL files. Auto-detects if omitted and the graph has a stored state.
+    *   `-since-commit <hash>`: **Incremental Ingestion.** Only parses files changed since the specified commit and writes directly to the graph database, skipping JSONL files. Auto-detects if omitted and the graph has a stored state.
 
-**Step 2: Import (Load Structural Graph to Neo4j):**
-Loads the structural graph into the active Neo4j database. This must be done **before** enrichment in the new streaming pipeline. Using separate nodes and edges files prevents a massive CPU penalty from scanning a combined file multiple times.
+**Step 2: Import (Load Structural Graph to Database):**
+Loads the structural graph into the active graph database. This must be done **before** enrichment in the new streaming pipeline. Using separate nodes and edges files prevents a massive CPU penalty from scanning a combined file multiple times.
 ```bash
 ${graphdb_bin} import -nodes nodes.jsonl -edges edges.jsonl
 ```
@@ -156,7 +156,7 @@ Structural queries utilize "Fully Qualified Names" (FQN). While the internal dat
 | `fetch-source` | **Read.** Fetch the source code of a function by ID/Name. | Function Name | |
 | `explore-domain` | **Discovery.** Explore the domain model around a concept. | Concept/Entity Name | |
 | `traverse` | **Raw Traversal.** Explore graph relationships directly. | Node ID / Name | `-edge-types`, `-direction`, `-depth` |
-| `cypher` | **Advanced.** Run a raw, read-only Cypher query directly against the Neo4j database. | (Ignored) | `-cypher "<query>"` |
+| `cypher` | **Advanced.** Run a raw, read-only Cypher query directly against the graph database. | (Ignored) | `-cypher "<query>"` |
 | `status` | **Verification.** Check the git commit hash stored in the graph. | (None) | |
 
 ### 4. Web Visualizer (HTTP Server)

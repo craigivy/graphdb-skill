@@ -42,7 +42,6 @@ jobs:
       - name: Package Bundle
         run: |
           echo "*" > .gemini/skills/graphdb/.gitignore
-          echo "*" > .gemini/skills/neo4j-manager/.gitignore
           mkdir -p .gemini/graph_data
           echo "*" > .gemini/graph_data/.gitignore
 

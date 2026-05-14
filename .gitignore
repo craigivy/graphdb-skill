@@ -28,7 +28,6 @@ test/output/
 # Dependencies
 /node_modules/
 .gemini/skills/graphdb/node_modules/
-.gemini/skills/neo4j-manager/node_modules/
 
 # Environment Variables
 .env

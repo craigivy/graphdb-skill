@@ -86,17 +86,6 @@ GENAI_API_VERSION=v1beta
 GEMINI_GENERATIVE_MODEL=gemma-4
 ```
 
-## 🗄️ Neo4j Database Setup
-
-The Code Property Graph is stored in a Neo4j database. To automate the database lifecycle, the installation bundle includes the **`neo4j-manager`** skill.
-
-You don't need to run manual container scripts or commands. Simply ask the Gemini CLI to:
-*   "Start the local Neo4j container"
-*   "List my available databases"
-*   "Switch to the 'LegacyProject' database"
-
-The manager automatically configures the required APOC plugins and vector index settings (Neo4j v5.11+) needed by the GraphDB skill.
-
 ## 🤖 Multi-Agent Orchestration
 
 This project is designed to integrate seamlessly with the [plan-commands](https://github.com/jjdelorme/plan-commands) orchestration framework. 
