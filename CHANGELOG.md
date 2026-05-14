@@ -5,20 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.8.0] - 2026-05-14
+## [1.8.397-beta] - 2026-05-14 [Pre-release]
 ### Added
-- **Config:** Added `GRAPHDB_DIR` environment variable support. This allows setting a persistent base directory for all commands, simplifying usage in environments where the target codebase directory is constant.
+- **Config:** Added `GRAPHDB_DIR` environment variable support. This allows setting a persistent base directory for all commands in the `.env` file, simplifying usage and ensuring consistency across different commands.
 - **Import:** Added `-dir` flag support to the `import` command to associate the current git commit with a specific codebase directory in the graph.
 
 ### Changed
-- **CLI:** Standardized driver and loader initialization across all commands, significantly improving CLI testability and allowing full mocking of the database layer.
-- **Terminology:** Generalized skill instructions to use "graph database" instead of Neo4j-specific language where appropriate.
-- **Workflows:** Simplified build and ingestion documentation in `README.md` and `SKILL.md` to prioritize the `build-all` command.
+- **CLI:** Standardized driver and loader initialization across all commands via new `setupDriver` and `setupLoader` abstractions. This significantly improves CLI testability and enables full mocking of the database layer.
+- **Workflows:** Updated `SKILL.md` to reflect the new `-dir` flag capabilities and prioritized the `build-all` command for simplified ingestion.
 
 ### Fixed
 - **Query:** Enabled directory-aware status lookup. The `status` query now correctly retrieves commit hashes associated with a specific directory (stored in `:Metadata` nodes) or global state (`:GraphState`).
-- **Ingest:** Improved incremental mode detection by correctly propagating the directory context to the graph provider.
-- **Tests:** Optimized E2E test suite to build the CLI binary only once per run, preventing timeouts and resource contention.
+- **Ingest:** Fixed incremental mode detection to properly propagate the directory context to the graph provider.
+- **Build:** Resolved a critical production build error where the `Loader` interface was undefined in `setup_prod.go`.
+- **Tests:** Optimized E2E test suite to build the CLI binary only once per run, preventing timeouts and resource contention. Added comprehensive coverage for `GRAPHDB_DIR` and directory-specific state lookups.
 
 ## [1.7.393-beta] - 2026-05-14 [Pre-release]
 ### Changed
