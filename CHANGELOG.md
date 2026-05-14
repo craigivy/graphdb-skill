@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.389-beta] - 2026-05-14 [Pre-release]
+### Fixed
+- **Query:** Enabled directory-aware status lookup. The `status` query now correctly retrieves commit hashes associated with a specific directory (stored in `:Metadata` nodes) or global state (`:GraphState`).
+- **Import:** Added `-dir` flag support to the `import` command to associate the current git commit with a specific codebase directory in the graph.
+- **Ingest:** Improved incremental mode detection by correctly propagating the directory context to the graph provider.
+- **Docs:** Updated `SKILL.md` to document the new `-dir` flag capabilities and its role in state management.
+
 ## [1.7.387-beta] - 2026-05-14 [Pre-release]
 ### Removed
 - **Skills:** Removed the `neo4j-manager` skill; management tasks are now handled externally or via core tool instructions.
