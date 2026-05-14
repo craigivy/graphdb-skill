@@ -6,9 +6,12 @@ import (
 	"context"
 	"graphdb/internal/config"
 	"graphdb/internal/embedding"
+	"graphdb/internal/loader"
 	"graphdb/internal/query"
 	"graphdb/internal/rpg"
 	"log"
+
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )
 
 func setupEmbedder(cfg config.Config) embedding.Embedder {
@@ -40,4 +43,12 @@ func setupExtractor(cfg config.Config, appContext string) rpg.FeatureExtractor {
 
 func setupProvider(cfg config.Config) (query.GraphProvider, error) {
 	return query.NewNeo4jProvider(cfg)
+}
+
+func setupDriver(cfg config.Config) (neo4j.DriverWithContext, error) {
+	return neo4j.NewDriverWithContext(cfg.Neo4jURI, neo4j.BasicAuth(cfg.Neo4jUser, cfg.Neo4jPassword, ""))
+}
+
+func setupLoader(ctx context.Context, cfg config.Config, driver neo4j.DriverWithContext) (loader.Loader, error) {
+	return loader.NewNeo4jLoader(driver, cfg.Neo4jDatabase, cfg.GeminiEmbeddingDimensions), nil
 }

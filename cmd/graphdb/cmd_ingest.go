@@ -7,7 +7,6 @@ import (
 	"flag"
 	"graphdb/internal/config"
 	"graphdb/internal/ingest"
-	"graphdb/internal/loader"
 	"graphdb/internal/storage"
 	"graphdb/internal/ui"
 	"log"
@@ -16,8 +15,6 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
-	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )
 
 func handleIngest(args []string) {
@@ -39,7 +36,6 @@ func handleIngest(args []string) {
 	*dirPtr = cfg.BaseDir // Ensure *dirPtr reflects the final base directory
 
 	var emitter storage.Emitter
-	var neoDriver neo4j.DriverWithContext
 	var changedFiles []string
 
 	sinceCommit := *sinceCommitPtr
@@ -83,13 +79,16 @@ func handleIngest(args []string) {
 
 		log.Printf("Found %d changed files.", len(changedFiles))
 
-		neoDriver, err = neo4j.NewDriverWithContext(cfg.Neo4jURI, neo4j.BasicAuth(cfg.Neo4jUser, cfg.Neo4jPassword, ""))
+		driver, err := setupDriver(cfg)
 		if err != nil {
 			log.Fatalf("Failed to create Neo4j driver: %v", err)
 		}
-		defer neoDriver.Close(context.Background())
+		defer driver.Close(context.Background())
 
-		neo4jLoader := loader.NewNeo4jLoader(neoDriver, cfg.Neo4jDatabase, cfg.GeminiEmbeddingDimensions)
+		neo4jLoader, err := setupLoader(context.Background(), cfg, driver)
+		if err != nil {
+			log.Fatalf("Failed to create loader: %v", err)
+		}
 		emitter = storage.NewNeo4jEmitter(neo4jLoader, context.Background(), 500)
 
 	} else if *nodesPtr != "" || *edgesPtr != "" {

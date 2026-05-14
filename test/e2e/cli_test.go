@@ -5,7 +5,13 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
+)
+
+var (
+	cliPathOnce sync.Once
+	cliPath     string
 )
 
 func getRepoRoot(t *testing.T) string {
@@ -27,23 +33,26 @@ func getRepoRoot(t *testing.T) string {
 }
 
 func buildCLI(t *testing.T) string {
-	root := getRepoRoot(t)
-	outputPath := filepath.Join(root, "bin", "graphdb_test")
-	cmdPath := filepath.Join(root, "cmd", "graphdb")
+	cliPathOnce.Do(func() {
+		root := getRepoRoot(t)
+		outputPath := filepath.Join(root, "bin", "graphdb_test")
+		cmdPath := filepath.Join(root, "cmd", "graphdb")
 
-	// Ensure bin directory exists
-	os.MkdirAll(filepath.Join(root, "bin"), 0755)
+		// Ensure bin directory exists
+		os.MkdirAll(filepath.Join(root, "bin"), 0755)
 
-	cmd := exec.Command("go", "build", "-tags", "test_mocks", "-o", outputPath, cmdPath)
-	output, err := cmd.Output()
-	if err != nil {
-		t.Fatalf("Failed to build CLI: %v\nOutput: %s", err, output)
-	}
-	return outputPath
+		cmd := exec.Command("go", "build", "-tags", "test_mocks", "-o", outputPath, cmdPath)
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("Failed to build CLI: %v\nOutput: %s", err, output)
+		}
+		cliPath = outputPath
+	})
+	return cliPath
 }
 
 func TestCLI_Ingest(t *testing.T) {
-        cliPath := buildCLI(t)
+        cli := buildCLI(t)
         root := getRepoRoot(t)
 
         nodesFile := filepath.Join(root, "test_nodes.jsonl")
@@ -54,7 +63,7 @@ func TestCLI_Ingest(t *testing.T) {
         fixturesPath := filepath.Join(root, "test", "fixtures", "typescript")
 
         // Run ingest
-        cmd := exec.Command(cliPath, "ingest",
+        cmd := exec.Command(cli, "ingest",
                 "-dir", fixturesPath,
                 "-nodes", nodesFile,
                 "-edges", edgesFile,
@@ -83,10 +92,10 @@ func TestCLI_Ingest(t *testing.T) {
         }
 }
 func TestCLI_Query_Help(t *testing.T) {
-	cliPath := buildCLI(t)
+	cli := buildCLI(t)
 
 	// Test help/unknown command
-	cmd := exec.Command(cliPath, "unknown")
+	cmd := exec.Command(cli, "unknown")
 	output, err := cmd.CombinedOutput()
 
 	// It should exit with 1
@@ -99,10 +108,10 @@ func TestCLI_Query_Help(t *testing.T) {
 }
 
 func TestCLI_Query_Seams(t *testing.T) {
-	    cliPath := buildCLI(t)
+	    cli := buildCLI(t)
 	
 	    // Run query
-	    cmd := exec.Command(cliPath, "query", "-type", "seams", "-module", ".*")
+	    cmd := exec.Command(cli, "query", "-type", "seams", "-module", ".*")
 	    cmd.Env = append(os.Environ(), "GRAPHDB_MOCK_ENABLED=true", "NEO4J_URI=bolt://mock", "NEO4J_USER=mock", "NEO4J_PASSWORD=mock")
         output, err := cmd.Output()
         if err != nil {
@@ -117,14 +126,14 @@ func TestCLI_Query_Seams(t *testing.T) {
 }
 
 func TestCLI_GlobalLogFile(t *testing.T) {
-	cliPath := buildCLI(t)
+	cli := buildCLI(t)
 	root := getRepoRoot(t)
 
 	logFilePath := filepath.Join(root, "test_global.log")
 	defer os.Remove(logFilePath)
 
 	// Run an ingest command that will quickly fail or complete, but we pass the new global flag
-	cmd := exec.Command(cliPath, "--log="+logFilePath, "ingest", "-dir", "nonexistent_dir_for_test")
+	cmd := exec.Command(cli, "--log="+logFilePath, "ingest", "-dir", "nonexistent_dir_for_test")
 	cmd.Env = append(os.Environ(), "GRAPHDB_MOCK_ENABLED=true", "NEO4J_URI=bolt://mock", "NEO4J_USER=mock", "NEO4J_PASSWORD=mock")
 	_ = cmd.Run() // It's okay if it fails (due to nonexistent dir), we just care that it logs
 

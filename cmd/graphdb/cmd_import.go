@@ -9,13 +9,10 @@ import (
 	"fmt"
 	"graphdb/internal/config"
 	"graphdb/internal/graph"
-	"graphdb/internal/loader"
 	"graphdb/internal/ui"
 	"log"
 	"os"
 	"path/filepath"
-
-	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )
 
 func handleImport(args []string) {
@@ -42,15 +39,18 @@ func handleImport(args []string) {
 		log.Fatal("NEO4J_URI environment variable is not set")
 	}
 
-	driver, err := neo4j.NewDriverWithContext(cfg.Neo4jURI, neo4j.BasicAuth(cfg.Neo4jUser, cfg.Neo4jPassword, ""))
+	ctx := context.Background()
+
+	driver, err := setupDriver(cfg)
 	if err != nil {
 		log.Fatalf("Failed to create Neo4j driver: %v", err)
 	}
-	defer driver.Close(context.Background())
+	defer driver.Close(ctx)
 
-	loader := loader.NewNeo4jLoader(driver, cfg.Neo4jDatabase, cfg.GeminiEmbeddingDimensions)
-
-	ctx := context.Background()
+	loader, err := setupLoader(ctx, cfg, driver)
+	if err != nil {
+		log.Fatalf("Failed to create loader: %v", err)
+	}
 
 	// 1. Apply Constraints
 	log.Println("Applying schema constraints...")
@@ -151,7 +151,7 @@ func handleImport(args []string) {
 		}
 	}
 
-	log.Println("Import complete.")
+	fmt.Println("Import complete.")
 
 	// 5. Update Graph State (Commit Hash)
 	// Try to get current git commit

@@ -114,3 +114,13 @@ func (m *MockProvider) UpdateFeatureTopology(nodes []*graph.Node, edges []*graph
 }
 func (m *MockProvider) UpdateFeatureSummary(id string, name string, description string) error { return nil }
 func (m *MockProvider) GetFunctionMetadata() ([]*graph.Node, error)                       { return nil, nil }
+
+// MockLoader for testing/dry-run
+type MockLoader struct{}
+
+func (m *MockLoader) BatchLoadNodes(ctx context.Context, nodes []graph.Node) error { return nil }
+func (m *MockLoader) BatchLoadEdges(ctx context.Context, edges []graph.Edge) error { return nil }
+func (m *MockLoader) ApplyConstraints(ctx context.Context) error                   { return nil }
+func (m *MockLoader) UpdateGraphState(ctx context.Context, commit string, dir string) error {
+	return nil
+}
