@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.399-beta] - 2026-05-14 [Pre-release]
+### Added
+- **Build:** Added incremental change detection to `build-all`. The tool now performs a `git diff` to verify if any supported source files (C++, C#, Java, Python, etc.) have changed since the last graph state before proceeding with the build.
+
+### Changed
+- **RPG:** Optimized `RunClustering` to clear the existing feature topology only after the new clustering results are successfully computed, improving database stability during long runs.
+- **RPG:** Improved `RunSummarization` to handle empty batches gracefully without throwing false positive logs.
+
+### Fixed
+- **Docs:** Significantly improved documentation for the `fetch-source` query type in `SKILL.md`, explicitly detailing its "full implementation" (signature + body) behavior.
+- **Docs:** Added explicit configuration instructions for `GRAPHDB_LOG` in `README.md`.
+
 ## [1.8.397-beta] - 2026-05-14 [Pre-release]
 ### Added
 - **Config:** Added `GRAPHDB_DIR` environment variable support. This allows setting a persistent base directory for all commands in the `.env` file, simplifying usage and ensuring consistency across different commands.
