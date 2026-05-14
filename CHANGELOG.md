@@ -5,16 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-05-14
+### Added
+- **Config:** Added `GRAPHDB_DIR` environment variable support. This allows setting a persistent base directory for all commands, simplifying usage in environments where the target codebase directory is constant.
+- **Import:** Added `-dir` flag support to the `import` command to associate the current git commit with a specific codebase directory in the graph.
+
+### Changed
+- **CLI:** Standardized driver and loader initialization across all commands, significantly improving CLI testability and allowing full mocking of the database layer.
+- **Terminology:** Generalized skill instructions to use "graph database" instead of Neo4j-specific language where appropriate.
+- **Workflows:** Simplified build and ingestion documentation in `README.md` and `SKILL.md` to prioritize the `build-all` command.
+
+### Fixed
+- **Query:** Enabled directory-aware status lookup. The `status` query now correctly retrieves commit hashes associated with a specific directory (stored in `:Metadata` nodes) or global state (`:GraphState`).
+- **Ingest:** Improved incremental mode detection by correctly propagating the directory context to the graph provider.
+- **Tests:** Optimized E2E test suite to build the CLI binary only once per run, preventing timeouts and resource contention.
+
+## [1.7.393-beta] - 2026-05-14 [Pre-release]
+### Changed
+- **CLI:** Standardized driver and loader initialization across all commands to improve testability.
+- **Tests:** Added comprehensive E2E tests for `GRAPHDB_DIR` and incremental ingestion.
+
 ## [1.7.391-beta] - 2026-05-14 [Pre-release]
 ### Added
-- **Config:** Added `GRAPHDB_DIR` environment variable support. This allows setting a persistent base directory for all commands, simplifying usage in environments where the target codebase directory is constant. The `-dir` flag still overrides this variable if both are provided.
+- **Config:** Added `GRAPHDB_DIR` environment variable support.
 
 ## [1.7.389-beta] - 2026-05-14 [Pre-release]
 ### Fixed
-- **Query:** Enabled directory-aware status lookup. The `status` query now correctly retrieves commit hashes associated with a specific directory (stored in `:Metadata` nodes) or global state (`:GraphState`).
-- **Import:** Added `-dir` flag support to the `import` command to associate the current git commit with a specific codebase directory in the graph.
-- **Ingest:** Improved incremental mode detection by correctly propagating the directory context to the graph provider.
-- **Docs:** Updated `SKILL.md` to document the new `-dir` flag capabilities and its role in state management.
+- **Query:** Enabled directory-aware status lookup.
+- **Import:** Added `-dir` flag support to associate commits with directories.
+- **Ingest:** Improved incremental mode detection.
+- **Docs:** Updated `SKILL.md` to document new `-dir` capabilities.
 
 ## [1.7.387-beta] - 2026-05-14 [Pre-release]
 ### Removed
