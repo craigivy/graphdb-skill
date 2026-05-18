@@ -5,64 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.8.399-beta] - 2026-05-14 [Pre-release]
+## [1.8.0] - 2026-05-18
 ### Added
-- **Build:** Added incremental change detection to `build-all`. The tool now performs a `git diff` to verify if any supported source files (C++, C#, Java, Python, etc.) have changed since the last graph state before proceeding with the build.
-
-### Changed
-- **RPG:** Optimized `RunClustering` to clear the existing feature topology only after the new clustering results are successfully computed, improving database stability during long runs.
-- **RPG:** Improved `RunSummarization` to handle empty batches gracefully without throwing false positive logs.
-
-### Fixed
-- **Docs:** Significantly improved documentation for the `fetch-source` query type in `SKILL.md`, explicitly detailing its "full implementation" (signature + body) behavior.
-- **Docs:** Added explicit configuration instructions for `GRAPHDB_LOG` in `README.md`.
-
-## [1.8.397-beta] - 2026-05-14 [Pre-release]
-### Added
-- **Config:** Added `GRAPHDB_DIR` environment variable support. This allows setting a persistent base directory for all commands in the `.env` file, simplifying usage and ensuring consistency across different commands.
-- **Import:** Added `-dir` flag support to the `import` command to associate the current git commit with a specific codebase directory in the graph.
-
-### Changed
-- **CLI:** Standardized driver and loader initialization across all commands via new `setupDriver` and `setupLoader` abstractions. This significantly improves CLI testability and enables full mocking of the database layer.
-- **Workflows:** Updated `SKILL.md` to reflect the new `-dir` flag capabilities and prioritized the `build-all` command for simplified ingestion.
-
-### Fixed
-- **Query:** Enabled directory-aware status lookup. The `status` query now correctly retrieves commit hashes associated with a specific directory (stored in `:Metadata` nodes) or global state (`:GraphState`).
-- **Ingest:** Fixed incremental mode detection to properly propagate the directory context to the graph provider.
-- **Build:** Resolved a critical production build error where the `Loader` interface was undefined in `setup_prod.go`.
-- **Tests:** Optimized E2E test suite to build the CLI binary only once per run, preventing timeouts and resource contention. Added comprehensive coverage for `GRAPHDB_DIR` and directory-specific state lookups.
-
-## [1.7.393-beta] - 2026-05-14 [Pre-release]
-### Changed
-- **CLI:** Standardized driver and loader initialization across all commands to improve testability.
-- **Tests:** Added comprehensive E2E tests for `GRAPHDB_DIR` and incremental ingestion.
-
-## [1.7.391-beta] - 2026-05-14 [Pre-release]
-### Added
-- **Config:** Added `GRAPHDB_DIR` environment variable support.
-
-## [1.7.389-beta] - 2026-05-14 [Pre-release]
-### Fixed
-- **Query:** Enabled directory-aware status lookup.
+- **Config:** Added `GRAPHDB_DIR` environment variable support to set a persistent base directory for all commands.
+- **Build:** Added incremental change detection to `build-all`. The tool now performs a `git diff` to verify if any supported source files have changed since the last graph state before proceeding.
 - **Import:** Added `-dir` flag support to associate commits with directories.
-- **Ingest:** Improved incremental mode detection.
-- **Docs:** Updated `SKILL.md` to document new `-dir` capabilities.
-
-## [1.7.387-beta] - 2026-05-14 [Pre-release]
-### Removed
-- **Skills:** Removed the `neo4j-manager` skill; management tasks are now handled externally or via core tool instructions.
-- **Tracing:** Removed Agent Execution Tracing scripts (`agent-tracer.js`), artifacts (`execution-trace.jsonl`), and the standalone `trace-viewer.html`.
-- **Assets:** Removed unused UI assets (`.png` files) and the deprecated `UX_DESIGN_OVERVIEW.md`.
-- **Artifacts:** Cleaned up temporary binary and test artifacts (`tmp_cypher`, `query.test`, `coverage.out`).
 
 ### Changed
-- **Terminology:** Generalized `graphdb` skill instructions in `SKILL.md` to use "graph database" instead of Neo4j-specific language where appropriate.
-- **Workflows:** Simplified build and ingestion documentation in `README.md` and `SKILL.md` to prioritize the `build-all` command.
-- **Status:** Marked "Custom LLM Backends" as an **Experimental** feature with appropriate stability warnings.
+- **CLI:** Standardized driver and loader initialization across all commands via new abstractions. This improves CLI testability and enables mocking of the database layer.
+- **RPG:** Optimized `RunClustering` to clear the existing feature topology only after new clustering results are successfully computed.
+- **RPG:** Improved `RunSummarization` to handle empty batches gracefully.
+- **Terminology:** Generalized instructions to use "graph database" instead of Neo4j-specific language.
+- **Docs:** Removed explicit `-dir` flag from workflow examples to rely cleanly on environment variables or current directory defaults.
 
 ### Fixed
-- **Git:** Updated `.gitignore` to prevent tracking of future test binaries (`*.test`) and coverage reports (`*.out`).
+- **Query:** Enabled directory-aware status lookup. The `status` query now correctly retrieves commit hashes associated with a specific directory (stored in `:Metadata` nodes) or global state.
+- **Ingest:** Fixed incremental mode detection to properly propagate the directory context.
+- **Build:** Resolved a critical production build error where the `Loader` interface was undefined in `setup_prod.go`.
+- **Git:** Updated `.gitignore` to prevent tracking of test binaries (`*.test`) and coverage reports (`*.out`).
 
+### Removed
+- **Skills:** Removed the `neo4j-manager` skill; management tasks are now handled externally.
+- **Tracing:** Removed Agent Execution Tracing scripts and standalone trace-viewer.html.
+- **Assets:** Removed unused UI assets and deprecated design documentation.
+- **Artifacts:** Cleaned up temporary binary and test artifacts.
 ## [1.7.0] - 2026-05-14
 ### Added
 - **Query:** Added `-dir` flag to explicitly set the base directory for source files, enabling analysis and source fetching from outside the project root.
