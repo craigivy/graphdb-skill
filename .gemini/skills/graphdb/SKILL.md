@@ -64,31 +64,31 @@ If a command (especially `enrich-features`, `build-all`, or any semantic query) 
 ### 1. The "One-Shot" Build (Recommended)
 To build the entire graph from scratch (Ingest -> Import -> All Enrichment Phases), use the `build-all` command. This is the standard entry point for all new projects.
 ```bash
-${graphdb_bin} build-all -dir .
+${graphdb_bin} build-all
 ```
 
 ### 2. Status & Incremental Ingestion
 Before rebuilding, check if the graph is already in sync with your local code:
 1. Get local commit: `git rev-parse HEAD`
-2. Get graph commit: `${graphdb_bin} query -type status -dir .`
-3. **Incremental Ingestion:** NEVER begin any ingestion without explicit approval from the user. If you have small changes, the `build-all` command automatically detects the state (using the `-dir` flag for baseline lookup) and only processes modified files if possible.
+2. Get graph commit: `${graphdb_bin} query -type status`
+3. **Incremental Ingestion:** NEVER begin any ingestion without explicit approval from the user. If you have small changes, the `build-all` command automatically detects the state (using the current directory or `GRAPHDB_DIR` for baseline lookup) and only processes modified files if possible.
 
 ## Advanced: Manual Pipeline
 If a specific phase fails or you need granular control, you can run the steps manually:
 
 **Step 1: Ingest**
 ```bash
-${graphdb_bin} ingest -dir . -nodes nodes.jsonl -edges edges.jsonl
+${graphdb_bin} ingest -nodes nodes.jsonl -edges edges.jsonl
 ```
 
 **Step 2: Import**
 ```bash
-${graphdb_bin} import -dir . -nodes nodes.jsonl -edges edges.jsonl
+${graphdb_bin} import -nodes nodes.jsonl -edges edges.jsonl
 ```
 
 **Step 3: Feature Enrichment**
 ```bash
-${graphdb_bin} enrich-features -dir .
+${graphdb_bin} enrich-features
 ```
 
 **Step 4: Contamination Analysis**
@@ -98,7 +98,7 @@ ${graphdb_bin} enrich-contamination
 
 **Step 5: Git History**
 ```bash
-${graphdb_bin} enrich-history -dir .
+${graphdb_bin} enrich-history
 ```
 
 **Step 6: Test Linkage**
