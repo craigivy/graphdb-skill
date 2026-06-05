@@ -48,6 +48,10 @@ func IsTestFile(path string) bool {
 		return true
 	case strings.HasSuffix(lowerPath, ".spec.ts"):
 		return true
+	case strings.HasSuffix(lowerPath, ".test.js"):
+		return true
+	case strings.HasSuffix(lowerPath, ".spec.js"):
+		return true
 	default:
 		return false
 	}

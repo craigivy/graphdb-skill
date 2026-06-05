@@ -72,6 +72,9 @@ func TestIsTestFile(t *testing.T) {
 		{"src/app.test.ts", true},
 		{"src/app.spec.ts", true},
 		{"src/app.ts", false},
+		{"src/app.test.js", true},
+		{"src/app.spec.js", true},
+		{"src/app.js", false},
 	}
 
 	for _, tt := range tests {
